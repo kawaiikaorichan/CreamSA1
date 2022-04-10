@@ -69,17 +69,12 @@ static void __cdecl InitTailsWeldInfo_r()
 	INIT_WELD(10, 0, 36, 37, Cream_HandIndices_DC);
 	INIT_WELD(11, 0, 38, 39, Cream_HandIndices_DC);
 
-	for (int i = 12; i < 24; ++i)
-	{
-		miles_jv_list[i] = {};
-	}
-
-	miles_jv_list[24] = { MILES_OBJECTS[0], MILES_OBJECTS[37], nullptr, 2, PL_JOIN_RHAND_POS, 0, 0, nullptr, nullptr };
-	miles_jv_list[25] = { MILES_OBJECTS[0], MILES_OBJECTS[39], nullptr, 2, PL_JOIN_LHAND_POS, 0, 0, nullptr, nullptr };
-	miles_jv_list[26] = { MILES_OBJECTS[0], MILES_OBJECTS[33], nullptr, 0, PL_JOIN_RFOOT_POS, 0, 0, nullptr, nullptr };
-	miles_jv_list[27] = { MILES_OBJECTS[0], MILES_OBJECTS[35], nullptr, 0, PL_JOIN_LFOOT_POS, 0, 0, nullptr, nullptr };
-	miles_jv_list[28] = { MILES_OBJECTS[0], MILES_OBJECTS[4], nullptr, 0, PL_JOIN_USER0_POS, 0, 0, nullptr, nullptr };
-	miles_jv_list[29] = {};
+	miles_jv_list[12] = { MILES_OBJECTS[0], MILES_OBJECTS[37], nullptr, 2, PL_JOIN_RHAND_POS, 0, 0, nullptr, nullptr };
+	miles_jv_list[13] = { MILES_OBJECTS[0], MILES_OBJECTS[39], nullptr, 2, PL_JOIN_LHAND_POS, 0, 0, nullptr, nullptr };
+	miles_jv_list[14] = { MILES_OBJECTS[0], MILES_OBJECTS[33], nullptr, 0, PL_JOIN_RFOOT_POS, 0, 0, nullptr, nullptr };
+	miles_jv_list[15] = { MILES_OBJECTS[0], MILES_OBJECTS[35], nullptr, 0, PL_JOIN_LFOOT_POS, 0, 0, nullptr, nullptr };
+	miles_jv_list[16] = { MILES_OBJECTS[0], MILES_OBJECTS[4], nullptr, 0, PL_JOIN_USER0_POS, 0, 0, nullptr, nullptr };
+	miles_jv_list[17] = {};
 }
 
 static void ReplaceTailsModels()
