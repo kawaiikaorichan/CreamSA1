@@ -39,9 +39,12 @@ static void __cdecl CreamCallback(NJS_OBJECT* obj)
 
 static void DrawEars(taskwk* twp, playerwk* pwp)
 {
-	njPushMatrix(head_mtx);
-	dsDrawModel(EARS_MDL->getmodel()->basicdxmodel);
-	njPopMatrixEx();
+	if (!(twp->flag & Status_Ball))
+	{
+		njPushMatrix(head_mtx);
+		dsDrawModel(EARS_MDL->getmodel()->basicdxmodel);
+		njPopMatrixEx();
+	}
 }
 
 static void __cdecl MilesDisplay_r(task* tp);
