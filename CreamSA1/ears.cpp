@@ -47,8 +47,6 @@ static void DrawEars(taskwk* twp, playerwk* pwp)
 	}
 }
 
-static void __cdecl MilesDisplay_r(task* tp);
-Trampoline MilesDisplay_t(0x460C40, 0x460C47, MilesDisplay_r);
 static void __cdecl MilesDisplay_r(task* tp)
 {
 	auto twp = tp->twp;
@@ -155,4 +153,5 @@ static void __cdecl MilesDisplay_r(task* tp)
 void InitEars()
 {
 	OpenModel(&EARS_MDL, "CreamEars.sa1mdl");
+	WriteJump(Tails_Display, MilesDisplay_r);
 }
