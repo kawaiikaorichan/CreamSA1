@@ -13,6 +13,75 @@ static ModelInfo* HEAD_MDL;
 static ModelInfo* BADGE_MDL;
 static ModelInfo* EVENT_MDL;
 
+DataArray(PL_JOIN_VERTEX, miles_jv_list, 0x3C4A610, 30);
+
+#define INIT_WELD(id, base, mdlA, mdlB, table) miles_jv_list[id] = { MILES_OBJECTS[base], MILES_OBJECTS[mdlA], MILES_OBJECTS[mdlB], static_cast<char>(LengthOfArray(table) / 2), PL_JOIN_SRC, 0, 0, nullptr, (uint16_t*)table }
+
+static const uint16_t Cream_UpperArmIndices_DC[] = {
+	0, 2,
+	1, 3,
+	4, 6,
+	5, 7,
+};
+
+static const uint16_t Cream_LowerArmIndices_DC[] = {
+	0, 10,
+	1, 11,
+	4, 14,
+	5, 15,
+};
+
+static const uint16_t Cream_LegIndices_DC[] = {
+	0, 2,
+	1, 3,
+	4, 6,
+	5, 7,
+};
+
+static const uint16_t Cream_ShoeIndices_DC[] = {
+	2, 3,
+	12, 8,
+	0, 1,
+	1, 0,
+	17, 13,
+	3, 2,
+};
+
+static const uint16_t Cream_HandIndices_DC[] = {
+	4, 14,
+	0, 15,
+	1, 13,
+	5, 12,
+};
+
+static void __cdecl InitTailsWeldInfo_r()
+{
+	INIT_WELD(0, 0, 20, 21, Cream_UpperArmIndices_DC);
+	INIT_WELD(1, 0, 21, 22, Cream_LowerArmIndices_DC);
+	INIT_WELD(2, 0, 23, 24, Cream_UpperArmIndices_DC);
+	INIT_WELD(3, 0, 24, 25, Cream_LowerArmIndices_DC);
+	INIT_WELD(4, 0, 26, 27, Cream_LegIndices_DC);
+	INIT_WELD(5, 0, 27, 28, Cream_LegIndices_DC);
+	INIT_WELD(6, 0, 29, 30, Cream_LegIndices_DC);
+	INIT_WELD(7, 0, 30, 31, Cream_LegIndices_DC);
+	INIT_WELD(8, 0, 32, 33, Cream_ShoeIndices_DC);
+	INIT_WELD(9, 0, 34, 35, Cream_ShoeIndices_DC);
+	INIT_WELD(10, 0, 36, 37, Cream_HandIndices_DC);
+	INIT_WELD(11, 0, 38, 39, Cream_HandIndices_DC);
+
+	for (int i = 12; i < 24; ++i)
+	{
+		miles_jv_list[i] = {};
+	}
+
+	miles_jv_list[24] = { MILES_OBJECTS[0], MILES_OBJECTS[37], nullptr, 2, PL_JOIN_RHAND_POS, 0, 0, nullptr, nullptr };
+	miles_jv_list[25] = { MILES_OBJECTS[0], MILES_OBJECTS[39], nullptr, 2, PL_JOIN_LHAND_POS, 0, 0, nullptr, nullptr };
+	miles_jv_list[26] = { MILES_OBJECTS[0], MILES_OBJECTS[33], nullptr, 0, PL_JOIN_RFOOT_POS, 0, 0, nullptr, nullptr };
+	miles_jv_list[27] = { MILES_OBJECTS[0], MILES_OBJECTS[35], nullptr, 0, PL_JOIN_LFOOT_POS, 0, 0, nullptr, nullptr };
+	miles_jv_list[28] = { MILES_OBJECTS[0], MILES_OBJECTS[4], nullptr, 0, PL_JOIN_USER0_POS, 0, 0, nullptr, nullptr };
+	miles_jv_list[29] = {};
+}
+
 static void ReplaceTailsModels()
 {
 	OpenModel(&CREAM_MDL, "Cream.sa1mdl");
@@ -122,4 +191,5 @@ static void ReplaceTailsModels()
 void HookCHRMODELS()
 {
 	ReplaceTailsModels();
+	WriteJump(InitTailsWeldInfo, InitTailsWeldInfo_r);
 }

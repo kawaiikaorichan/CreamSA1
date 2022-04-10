@@ -12,8 +12,6 @@ extern "C"
 		modpath = path;
 		helperFunctions.ReplaceFile("system\\MILES.pvm", "system\\CREAM_DC.pvm");
 
-		WriteData<1>((void*)0x43FA90, 0xC3); // remove welds
-
 		HookCHRMODELS();
 		InitEars();
 	}
