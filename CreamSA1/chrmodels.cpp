@@ -114,6 +114,9 @@ static void ReplaceTailsModels()
 		auto action = MILES_ACTIONS[i];
 		if (action) action->object = root;
 	}
+
+	MILES_ACTIONS[64]->object = MILES_OBJECTS[2];
+	MILES_ACTIONS[65]->object = MILES_OBJECTS[3];
 }
 
 void HookCHRMODELS()
