@@ -128,19 +128,23 @@ static void CheeseNormal(taskwk* twp, taskwk* ptwp, playerwk* ppwp)
 	njCalcPoint(0, &v, &v);
 	njPopMatrixEx();
 
-	twp->pos = GetPosition(&twp->pos, &v, 0.1f); // Move to target
-	twp->ang.y = AdjustAngle(twp->ang.y, ptwp->ang.y, 0x300); // Rotate to player angle
+	auto new_pos = GetPosition(&twp->pos, &v, 0.1f); // Get new position
+	
+	twp->pos = new_pos; // Set new position
 
-	// Choose animation based on distance from target
-	NJS_VECTOR pos = twp->pos;
-	njSubVector(&pos, &v);
-	if (njScalor(&pos) > 1.0f)
+	njSubVector(&new_pos, &v); // Get difference from destination
+	auto dist = njScalor(&new_pos); // Get distance from destination
+
+	// If close then idle submode, if away then fly submode
+	if (dist < 1.0f)
 	{
-		twp->smode = ANIM_FLY;
+		twp->smode = ANIM_IDLE;
+		twp->ang.y = AdjustAngle(twp->ang.y, ptwp->ang.y, 0x300); // Rotate to player angle
 	}
 	else
 	{
-		twp->smode = ANIM_IDLE;
+		twp->smode = ANIM_FLY;
+		twp->ang.y = 0xC000 - NJM_RAD_ANG(atan2(new_pos.x, new_pos.z)); // Rotate to destination
 	}
 }
 
