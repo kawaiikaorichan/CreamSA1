@@ -33,6 +33,59 @@ static NJS_ACTION CHEESE_ACTIONS[3] = {};
 
 static task* cheese_tp[8] = {};
 
+static NJS_POINT3 GetPosition(NJS_POINT3* orig, NJS_POINT3* dest, float state) {
+	NJS_VECTOR result;
+	result.x = (dest->x - orig->x) * state + orig->x;
+	result.y = (dest->y - orig->y) * state + orig->y;
+	result.z = (dest->z - orig->z) * state + orig->z;
+	return result;
+}
+
+static void __cdecl CheeseBallDisplay(task* tp)
+{
+	if (!loop_count)
+	{
+		auto twp = tp->twp;
+
+		njSetTexture(&MILES_TEXLIST);
+		njPushMatrixEx();
+		njTranslateEx(&twp->pos);
+		dsDrawModel(CHEESEBALL_MDL->getmodel()->basicdxmodel);
+		njPopMatrixEx();
+	}
+}
+
+static void __cdecl CheeseBallExec(task* tp)
+{
+	auto twp = tp->twp;
+	auto parent_twp = tp->ptp->twp;
+
+	switch (twp->mode)
+	{
+	case MODE_INIT:
+		tp->disp = CheeseBallDisplay;
+		twp->mode = MODE_NORMAL;
+		break;
+	case MODE_NORMAL:
+		// Offset from chao
+		NJS_POINT3 v = { 0.0f, 4.25f + (0.15f * njCos(FrameCounterUnpaused * 300)), -1.0f };
+		
+		// Calc world position
+		njPushMatrix(_nj_unit_matrix_);
+		njRotateY_(0xC000 - LOWORD(parent_twp->ang.y));
+		njCalcPoint(0, &v, &v);
+		njPopMatrixEx();
+		njAddVector(&v, &parent_twp->pos);
+
+		// Transform current position to destination
+		twp->pos = GetPosition(&twp->pos, &v, 0.5f);
+
+		break;
+	}
+
+	tp->disp(tp);
+}
+
 static void __cdecl CheeseDestruct(task* tp)
 {
 	cheese_tp[TWP_PNUM(tp->twp)] = nullptr;
@@ -54,14 +107,6 @@ static void __cdecl CheeseDisplay(task* tp)
 	}
 }
 
-NJS_POINT3 GetPosition(NJS_POINT3* orig, NJS_POINT3* dest, float state) {
-	NJS_VECTOR result;
-	result.x = (dest->x - orig->x) * state + orig->x;
-	result.y = (dest->y - orig->y) * state + orig->y;
-	result.z = (dest->z - orig->z) * state + orig->z;
-	return result;
-}
-
 static void __cdecl CheeseExec(task* tp)
 {
 	auto twp = tp->twp;
@@ -78,31 +123,31 @@ static void __cdecl CheeseExec(task* tp)
 	switch (twp->mode)
 	{
 	case MODE_INIT:
+		tp->dest = CheeseDestruct;
+		tp->disp = CheeseDisplay;
+		CreateChildTask(2u, CheeseBallExec, tp);
 		twp->pos = ptwp->pos;
 		twp->mode = MODE_NORMAL;
 		break;
 	case MODE_NORMAL:
-		twp->timer.l += 100;
-		float offsetX = 0.25f * njCos(twp->timer.l);
-		float offsetZ = 1.0f * njCos(twp->wtimer);
-		float offsetY = 0.8f * njSin(twp->timer.l);
+		// Offset from player
+		NJS_POINT3 v = { -1.5f + (0.25f * njCos(FrameCounterUnpaused * 80)), ppwp->p.height - 1.0f + (0.8f * njSin(FrameCounterUnpaused * 80)), 2.3f + (1.0f * njCos(FrameCounterUnpaused * 180)) };
 
-		// Calc target position
+		// Calc world position
 		njPushMatrix(_nj_unit_matrix_);
 		njTranslateEx(&ptwp->pos);
 		njRotateZ_(ptwp->ang.z);
 		njRotateX_(ptwp->ang.x);
 		njRotateY_(-LOWORD(ptwp->ang.y));
-		njTranslate(0, -1.5f + offsetX, ppwp->p.height - 1.0f + offsetY, 2.3f + offsetZ);
-		njGetTranslation(0, &twp->scl);
+		njCalcPoint(0, &v, &v);
 		njPopMatrixEx();
 
-		twp->pos = GetPosition(&twp->pos, &twp->scl, 0.1f); // Move to target
+		twp->pos = GetPosition(&twp->pos, &v, 0.1f); // Move to target
 		twp->ang.y = AdjustAngle(twp->ang.y, ptwp->ang.y, 0x300); // Rotate to player angle
 
-		// Get animation based on distance from target
+		// Choose animation based on distance from target
 		NJS_VECTOR pos = twp->pos;
-		njSubVector(&pos, &twp->scl);
+		njSubVector(&pos, &v);
 		if (njScalor(&pos) > 1.0f)
 		{
 			twp->smode = ANIM_FLY;
@@ -115,8 +160,11 @@ static void __cdecl CheeseExec(task* tp)
 		break;
 	}
 
+	// Run animation
 	twp->value.f = fmod(twp->value.f + 1.0f, (float)(CHEESE_ACTIONS[twp->smode].motion->nbFrame - 1));
-	tp->disp(tp);
+	
+	LoopTaskC(tp); // Call the ball child task
+	tp->disp(tp); // Draw
 }
 
 static void CreateCheese(int pnum)
@@ -125,9 +173,6 @@ static void CreateCheese(int pnum)
 	{
 		auto tp = CreateElementalTask(2u, 3, CheeseExec);
 		TWP_PNUM(tp->twp) = pnum;
-
-		tp->dest = CheeseDestruct;
-		tp->disp = CheeseDisplay;
 
 		cheese_tp[pnum] = tp;
 	}
