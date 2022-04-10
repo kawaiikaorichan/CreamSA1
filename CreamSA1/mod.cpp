@@ -2,6 +2,7 @@
 #include "SADXModLoader.h"
 #include "chrmodels.h"
 #include "ears.h"
+#include "cheese.h"
 
 std::string modpath;
 
@@ -14,6 +15,7 @@ extern "C"
 
 		HookCHRMODELS();
 		InitEars();
+		InitCheese();
 	}
 
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };

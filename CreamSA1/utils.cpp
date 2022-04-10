@@ -3,6 +3,24 @@
 #include "mod.h"
 #include "utils.h"
 
+void njRotateX_(Angle ang)
+{
+	if (ang)
+		njRotateX(0, (unsigned __int16)ang);
+}
+
+void njRotateY_(Angle ang)
+{
+	if (ang)
+		njRotateY(0, (unsigned __int16)ang);
+}
+
+void njRotateZ_(Angle ang)
+{
+	if (ang)
+		njRotateZ(0, (unsigned __int16)ang);
+}
+
 bool OpenModel(ModelInfo** pInfo, const char* path)
 {
 	std::string path_ = modpath + "\\models\\" + path;

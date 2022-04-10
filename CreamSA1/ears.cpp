@@ -10,24 +10,6 @@ void(__cdecl** NodeCallbackFuncPtr)(NJS_OBJECT* obj) = (decltype(NodeCallbackFun
 static NJS_MATRIX head_mtx;
 static ModelInfo* EARS_MDL;
 
-static void njRotateX_(Angle ang)
-{
-	if (ang)
-		njRotateX(0, (unsigned __int16)ang);
-}
-
-static void njRotateY_(Angle ang)
-{
-	if (ang)
-		njRotateY(0, (unsigned __int16)ang);
-}
-
-static void njRotateZ_(Angle ang)
-{
-	if (ang)
-		njRotateZ(0, (unsigned __int16)ang);
-}
-
 static void __cdecl CreamCallback(NJS_OBJECT* obj)
 {
 	if (obj == MILES_OBJECTS[4])

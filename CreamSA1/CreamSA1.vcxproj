@@ -96,6 +96,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="cheese.h" />
     <ClInclude Include="chrmodels.h" />
     <ClInclude Include="ears.h" />
     <ClInclude Include="framework.h" />
@@ -104,6 +105,7 @@
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cheese.cpp" />
     <ClCompile Include="chrmodels.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ears.cpp" />
