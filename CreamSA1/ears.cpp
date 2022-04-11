@@ -3,6 +3,7 @@
 #include "ModelInfo.h"
 #include "AnimationFile.h"
 #include "utils.h"
+#include "pointers.h"
 
 static NJS_MATRIX head_mtx;
 static ModelInfo* EARS_MDL;

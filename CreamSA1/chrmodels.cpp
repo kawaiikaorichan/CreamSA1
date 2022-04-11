@@ -3,6 +3,7 @@
 #include "ModelInfo.h"
 #include "AnimationFile.h"
 #include "utils.h"
+#include "pointers.h"
 
 static ModelInfo* CREAM_MDL;
 static ModelInfo* CURLED_MDL;

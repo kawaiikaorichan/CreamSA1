@@ -5,7 +5,7 @@
 DataArray(PL_JOIN_VERTEX, miles_jv_list, 0x3C4A610, 30);
 
 FunctionPointer(void, DrawCharacterShadow, (taskwk* twp, shadowwk* swp), 0x49F0B0);
-void(__cdecl** NodeCallbackFuncPtr)(NJS_OBJECT* obj) = (decltype(NodeCallbackFuncPtr))0x3AB9908;
+static void(__cdecl** NodeCallbackFuncPtr)(NJS_OBJECT* obj) = (decltype(NodeCallbackFuncPtr))0x3AB9908;
 
 static const void* const MilesChangeRunningMotionPtr = (void*)0x459DA0;
 static inline void MilesChangeRunningMotion(taskwk* twp, motionwk2* mwp, playerwk* pwp)
