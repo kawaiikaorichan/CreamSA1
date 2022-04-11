@@ -5,8 +5,29 @@
 #include "utils.h"
 #include "pointers.h"
 
+#define TWP_PNUM(twp) twp->counter.b[0]
+#define MILES_FLY 15i8
+
+enum
+{
+	ANIM_IDLE,
+	ANIM_FLY,
+	ANIM_RUN,
+
+	ANIM_COUNT
+};
+
 static NJS_MATRIX head_mtx;
-static ModelInfo* EARS_MDL;
+
+static ModelInfo* EARS_MDL     = nullptr;
+static AnimationFile* IDLE_ANM = nullptr;
+static AnimationFile* FLY_ANM  = nullptr;
+static AnimationFile* RUN_ANM  = nullptr;
+
+static NJS_MOTION* EarsMotions[ANIM_COUNT]{};
+static constexpr float MotionSpeeds[ANIM_COUNT] = { 0.05f, 0.1f, 0.05f };
+
+static float MotionFrames[8]{};
 
 static void __cdecl CreamCallback(NJS_OBJECT* obj)
 {
@@ -16,12 +37,43 @@ static void __cdecl CreamCallback(NJS_OBJECT* obj)
 	}
 }
 
+static int GetEarAnimation(taskwk* twp, playerwk* pwp)
+{
+	if (twp->mode == MILES_FLY)
+	{
+		return ANIM_FLY;
+	}
+	else if (pwp->spd.x > 2.0f)
+	{
+		return ANIM_RUN;
+	}
+	else
+	{
+		return ANIM_IDLE;
+	}
+}
+
 static void DrawEars(taskwk* twp, playerwk* pwp)
 {
 	if (!(twp->flag & Status_Ball))
 	{
+		auto& frame = MotionFrames[TWP_PNUM(twp)];
+
+		auto anim_id = GetEarAnimation(twp, pwp);
+		auto motion = EarsMotions[anim_id];
+
+		if (!IsGamePaused())
+		{
+			frame += MotionSpeeds[anim_id];
+
+			if ((unsigned int)frame >= motion->nbFrame)
+			{
+				frame = 0.0f;
+			}
+		}
+		
 		njPushMatrix(head_mtx);
-		dsDrawModel(EARS_MDL->getmodel()->basicdxmodel);
+		dsDrawShapeMotion(EARS_MDL->getmodel(), motion, motion, frame);
 		njPopMatrixEx();
 	}
 }
@@ -132,5 +184,13 @@ static void __cdecl MilesDisplay_r(task* tp)
 void InitEars()
 {
 	OpenModel(&EARS_MDL, "CreamEars.sa1mdl");
+	OpenAnim(&IDLE_ANM, "CreamEarsIdle.saanim");
+	OpenAnim(&FLY_ANM, "CreamEarsFly.saanim");
+	OpenAnim(&RUN_ANM, "CreamEarsRun.saanim");
+
+	EarsMotions[ANIM_IDLE] = IDLE_ANM->getmotion();
+	EarsMotions[ANIM_FLY] = FLY_ANM->getmotion();
+	EarsMotions[ANIM_RUN] = RUN_ANM->getmotion();
+
 	WriteJump(Tails_Display, MilesDisplay_r);
 }
