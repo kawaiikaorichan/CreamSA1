@@ -5,14 +5,16 @@
 #include "utils.h"
 #include "pointers.h"
 
-static ModelInfo* CREAM_MDL;
-static ModelInfo* CURLED_MDL;
-static ModelInfo* BALL_MDL;
-static ModelInfo* ANKLET_L_MDL;
-static ModelInfo* ANKLET_R_MDL;
-static ModelInfo* HEAD_MDL;
-static ModelInfo* BADGE_MDL;
-static ModelInfo* EVENT_MDL;
+static ModelInfo* CREAM_MDL    = nullptr;
+static ModelInfo* CURLED_MDL   = nullptr;
+static ModelInfo* BALL_MDL     = nullptr;
+static ModelInfo* ANKLET_L_MDL = nullptr;
+static ModelInfo* ANKLET_R_MDL = nullptr;
+static ModelInfo* HEAD_MDL     = nullptr;
+static ModelInfo* BADGE_MDL    = nullptr;
+static ModelInfo* EVENT_MDL    = nullptr;
+
+static AnimationFile* EVENT_ANM = nullptr;
 
 #define INIT_WELD(id, base, mdlA, mdlB, table) miles_jv_list[id] = { MILES_OBJECTS[base], MILES_OBJECTS[mdlA], MILES_OBJECTS[mdlB], static_cast<char>(LengthOfArray(table) / 2), PL_JOIN_SRC, 0, 0, nullptr, (uint16_t*)table }
 
@@ -86,6 +88,7 @@ static void ReplaceTailsModels()
 	OpenModel(&HEAD_MDL, "CreamHead.sa1mdl");
 	OpenModel(&BADGE_MDL, "CreamBadge.sa1mdl");
 	OpenModel(&EVENT_MDL, "CreamEvent.sa1mdl");
+	OpenAnim(&EVENT_ANM, "CreamFaceMotions.saanim");
 
 	auto root = CREAM_MDL->getmodel();
 	auto ankletl = ANKLET_L_MDL->getmodel();
@@ -180,6 +183,8 @@ static void ReplaceTailsModels()
 
 	MILES_ACTIONS[64]->object = MILES_OBJECTS[2];
 	MILES_ACTIONS[65]->object = MILES_OBJECTS[3];
+
+	MILES_MOTIONS[0] = EVENT_ANM->getmotion();
 }
 
 void HookCHRMODELS()
