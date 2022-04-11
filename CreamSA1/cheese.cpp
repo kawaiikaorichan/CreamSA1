@@ -4,9 +4,14 @@
 #include "ModelInfo.h"
 #include "AnimationFile.h"
 #include "utils.h"
+#include "pointers.h"
 
 #define TWP_PNUM(twp) twp->counter.b[0]
 #define TWP_CHARA(twp) twp->counter.b[1]
+
+#define MILES_INIT 1i8
+#define MILES_STND 1i8
+#define MILES_TATK 20i8
 
 enum : __int8
 {
@@ -23,6 +28,7 @@ enum : __int8
 };
 
 Trampoline* MilesTalesPrower_t = nullptr;
+Trampoline* MilesChkMode_t     = nullptr;
 
 static ModelInfo* CHEESE_MDL = nullptr;
 static ModelInfo* CHEESEBALL_MDL = nullptr;
@@ -31,8 +37,9 @@ static AnimationFile* CHEESE_FLY_ANM = nullptr;
 static AnimationFile* CHEESE_ATTACK_ANM = nullptr;
 
 static NJS_ACTION CHEESE_ACTIONS[3] = {};
-
+static CCL_INFO CHEESE_CCL = { 0, CI_FORM_SPHERE, 0x40, 0x41, 0x400, { 0.0f, 1.5f, 0.0f }, 2.0f, 0.0f, 0.0f, 0.0f, 0, 0, 0 };
 static task* cheese_tp[8] = {};
+static int ComboTimers[8]{};
 
 static NJS_POINT3 GetPosition(NJS_POINT3* orig, NJS_POINT3* dest, float state) {
 	NJS_VECTOR result;
@@ -110,7 +117,7 @@ static void __cdecl CheeseDisplay(task* tp)
 
 static void CheeseNormal(taskwk* twp, taskwk* ptwp, playerwk* ppwp)
 {
-	if (ptwp->mode == 20i8)
+	if (ptwp->mode == MILES_TATK)
 	{
 		twp->mode = MODE_ATTACK;
 		return;
@@ -157,7 +164,7 @@ static void CheeseAttack(taskwk* twp, taskwk* ptwp, playerwk* ppwp)
 		return;
 	}
 
-	Angle attack_ang = -(++twp->timer.l * 2000);
+	Angle attack_ang = -(++twp->timer.l * 3000);
 
 	// Get position around circle
 	NJS_POINT3 v;
@@ -170,12 +177,19 @@ static void CheeseAttack(taskwk* twp, taskwk* ptwp, playerwk* ppwp)
 	njTranslateEx(&ptwp->pos);
 	njRotateZ_(ptwp->ang.z);
 	njRotateX_(ptwp->ang.x);
-	njRotateY_(-LOWORD(ptwp->ang.y));
 	njCalcPoint(0, &v, &v);
 	njPopMatrixEx();
 
 	twp->pos = GetPosition(&twp->pos, &v, 0.33f); // Move to target
 	twp->ang.y = attack_ang + 0xC000;
+
+	// Move player's damage collision:
+	ppwp->free.f[0] = twp->pos.x;
+	ppwp->free.f[1] = twp->pos.y;
+	ppwp->free.f[2] = twp->pos.z;
+	ppwp->free.f[3] = v.x;
+	ppwp->free.f[4] = v.y;
+	ppwp->free.f[5] = v.z;
 
 	twp->smode = ANIM_ATTACK;
 }
@@ -199,6 +213,7 @@ static void __cdecl CheeseExec(task* tp)
 		tp->dest = CheeseDestruct;
 		tp->disp = CheeseDisplay;
 		CreateChildTask(2u, CheeseBallExec, tp);
+		CCL_Init(tp, &CHEESE_CCL, 1, 4);
 		twp->pos = ptwp->pos;
 		twp->mode = MODE_NORMAL;
 		break;
@@ -213,6 +228,7 @@ static void __cdecl CheeseExec(task* tp)
 	// Run animation
 	twp->value.f = fmod(twp->value.f + 1.0f, (float)(CHEESE_ACTIONS[twp->smode].motion->nbFrame - 1));
 	
+	EntryColliList(twp); // Add collision
 	LoopTaskC(tp); // Call the ball child task
 	tp->disp(tp); // Draw
 }
@@ -232,7 +248,7 @@ static void __cdecl MilesTalesPrower_r(task* tp)
 {
 	auto twp = tp->twp;
 
-	if (twp->mode == 0)
+	if (twp->mode == MILES_INIT)
 	{
 		CreateCheese(TWP_PNUM(twp));
 	}
@@ -240,9 +256,78 @@ static void __cdecl MilesTalesPrower_r(task* tp)
 	((decltype(MilesTalesPrower_r)*)MilesTalesPrower_t->Target())(tp);
 }
 
+static void MilesChkMode_o(playerwk* pwp, motionwk2* mwp, taskwk* twp)
+{
+	auto target = MilesChkMode_t->Target();
+	__asm
+	{
+		push[twp]
+		mov ecx, [mwp]
+		mov eax, [pwp]
+		call target
+		add esp, 4
+	}
+}
+
+static void __cdecl MilesChkMode_r(playerwk* pwp, motionwk2* mwp, taskwk* twp)
+{
+	if (twp->mode == MILES_TATK) // Custom attack code
+	{
+		auto pnum = TWP_PNUM(twp);
+
+		if (MilesCheckInput(twp, mwp, pwp) || MilesCheckJump(twp, pwp))
+		{
+			ComboTimers[pnum] = 0;
+			return;
+		}
+
+		// Set animation:
+		if (pwp->spd.x > 0.0f)
+			MilesChangeRunningMotion(twp, mwp, pwp);
+		else
+			pwp->mj.reqaction = 0;
+
+		if (++ComboTimers[pnum] >= 0x2Bu)
+		{
+			ComboTimers[pnum] = 0;
+
+			// Retry if we have the rhythm badge
+			if (pwp->equipment & Upgrades_RhythmBadge)
+			{
+				if (!(per[pnum]->on & AttackButtons))
+				{
+					twp->mode = MILES_STND;
+				}
+			}
+			else
+			{
+				twp->mode = MILES_STND;
+			}
+		}
+	}
+
+	MilesChkMode_o(pwp, mwp, twp);
+}
+
+static void __declspec(naked) MilesChkMode_w()
+{
+	__asm
+	{
+		push[esp + 04h]
+		push ecx
+		push eax
+		call MilesChkMode_r
+		pop eax
+		pop ecx
+		add esp, 4
+		retn
+	}
+}
+
 void InitCheese()
 {
-	MilesTalesPrower_t = new Trampoline(0x461700, 0x461707, MilesTalesPrower_r);
+	MilesTalesPrower_t = new Trampoline(0x461700, 0x461707, MilesTalesPrower_r); // Hook Tails exec to add Cheese
+	MilesChkMode_t     = new Trampoline(0x45E5D0, 0x45E5D5, MilesChkMode_w); // Hook Tails modes to add custom attack
 
 	OpenModel(&CHEESE_MDL, "Cheese.sa1mdl");
 	OpenModel(&CHEESEBALL_MDL, "CheeseBall.sa1mdl");
@@ -256,4 +341,11 @@ void InitCheese()
 	CHEESE_ACTIONS[ANIM_IDLE] = { root, CHEESE_IDLE_ANM->getmotion() };
 	CHEESE_ACTIONS[ANIM_FLY] = { root, CHEESE_FLY_ANM->getmotion() };
 	CHEESE_ACTIONS[ANIM_ATTACK] = { root, CHEESE_ATTACK_ANM->getmotion() };
+
+	// Remove original attack behaviour:
+	WriteData((uint8_t*)0x45B180, 0xC3ui8);
+	WriteData((uint8_t*)0x45E280, 0xC3ui8);
+	WriteData((uint8_t*)0x45F7E4, 0xEBui8);
+	WriteData<9>((void*)0x45D6FB, 0x90ui8);
+	//WriteData<5>((void*)0x45D74F, 0x90ui8);
 }
