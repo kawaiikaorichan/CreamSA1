@@ -13,8 +13,6 @@ static ModelInfo* HEAD_MDL;
 static ModelInfo* BADGE_MDL;
 static ModelInfo* EVENT_MDL;
 
-DataArray(PL_JOIN_VERTEX, miles_jv_list, 0x3C4A610, 30);
-
 #define INIT_WELD(id, base, mdlA, mdlB, table) miles_jv_list[id] = { MILES_OBJECTS[base], MILES_OBJECTS[mdlA], MILES_OBJECTS[mdlB], static_cast<char>(LengthOfArray(table) / 2), PL_JOIN_SRC, 0, 0, nullptr, (uint16_t*)table }
 
 static const uint16_t Cream_UpperArmIndices_DC[] = {

@@ -30,10 +30,11 @@ enum : __int8
 Trampoline* MilesTalesPrower_t = nullptr;
 Trampoline* MilesChkMode_t     = nullptr;
 
-static ModelInfo* CHEESE_MDL = nullptr;
+static ModelInfo* CHEESE_MDL     = nullptr;
 static ModelInfo* CHEESEBALL_MDL = nullptr;
-static AnimationFile* CHEESE_IDLE_ANM = nullptr;
-static AnimationFile* CHEESE_FLY_ANM = nullptr;
+
+static AnimationFile* CHEESE_IDLE_ANM   = nullptr;
+static AnimationFile* CHEESE_FLY_ANM    = nullptr;
 static AnimationFile* CHEESE_ATTACK_ANM = nullptr;
 
 static NJS_ACTION CHEESE_ACTIONS[3] = {};
