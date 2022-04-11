@@ -56,11 +56,13 @@ static void __cdecl CheeseBallDisplay(task* tp)
 	{
 		auto twp = tp->twp;
 
+		___dsSetPalette(2);
 		njSetTexture(&MILES_TEXLIST);
 		njPushMatrixEx();
 		njTranslateEx(&twp->pos);
 		dsDrawModel(CHEESEBALL_MDL->getmodel()->basicdxmodel);
 		njPopMatrixEx();
+		___dsSetPalette(0);
 	}
 }
 
@@ -106,6 +108,7 @@ static void __cdecl CheeseDisplay(task* tp)
 	{
 		auto twp = tp->twp;
 
+		___dsSetPalette(2);
 		njSetTexture(&MILES_TEXLIST);
 		njPushMatrixEx();
 		njTranslateEx(&twp->pos);
@@ -113,6 +116,7 @@ static void __cdecl CheeseDisplay(task* tp)
 		njScale(0, 0.8f, 0.8f, 0.8f);
 		njAction(&CHEESE_ACTIONS[twp->smode], twp->value.f);
 		njPopMatrixEx();
+		___dsSetPalette(0);
 	}
 }
 
