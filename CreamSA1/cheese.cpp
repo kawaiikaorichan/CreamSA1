@@ -60,6 +60,7 @@ static void __cdecl CheeseBallDisplay(task* tp)
 		njSetTexture(&MILES_TEXLIST);
 		njPushMatrixEx();
 		njTranslateEx(&twp->pos);
+		njScale(0, 1.0f + 0.15f * njCos(FrameCounterUnpaused * 1000), 1.0f, 1.0f + 0.15f * njSin(FrameCounterUnpaused * 2000));
 		dsDrawModel(CHEESEBALL_MDL->getmodel()->basicdxmodel);
 		njPopMatrixEx();
 		___dsSetPalette(0);
@@ -79,7 +80,7 @@ static void __cdecl CheeseBallExec(task* tp)
 		break;
 	case MODE_NORMAL:
 		// Offset from chao
-		NJS_POINT3 v = { 0.0f, 4.25f + (0.15f * njCos(FrameCounterUnpaused * 300)), -1.0f };
+		NJS_POINT3 v = { 0.0f, 4.25f, -1.0f };
 		
 		// Calc world position
 		njPushMatrix(_nj_unit_matrix_);
@@ -150,7 +151,7 @@ static void CheeseNormal(taskwk* twp, taskwk* ptwp, playerwk* ppwp)
 	auto dist = njScalor(&new_pos); // Get distance from destination
 
 	// If close then idle submode, if away then fly submode
-	if (dist < 1.0f)
+	if (dist < 2.0f)
 	{
 		twp->smode = IsTailsFlying(ptwp, ppwp) ? ANIM_FLY : ANIM_IDLE;
 		twp->ang.y = AdjustAngle(twp->ang.y, ptwp->ang.y, 0x300); // Rotate to player angle
