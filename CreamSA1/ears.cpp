@@ -64,12 +64,7 @@ static void DrawEars(taskwk* twp, playerwk* pwp)
 
 		if (!IsGamePaused())
 		{
-			frame += MotionSpeeds[anim_id];
-
-			if ((unsigned int)frame >= motion->nbFrame)
-			{
-				frame = 0.0f;
-			}
+			frame = fmodf(frame + MotionSpeeds[anim_id], (float)motion->nbFrame);
 		}
 		
 		njPushMatrix(head_mtx);
