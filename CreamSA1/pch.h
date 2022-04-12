@@ -3,5 +3,7 @@
 
 #include "framework.h"
 #include "SADXModLoader.h"
+#include "ModelInfo.h"
+#include "AnimationFile.h"
 
 #endif //PCH_H
