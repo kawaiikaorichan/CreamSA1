@@ -4,6 +4,7 @@
 
 DataArray(PL_JOIN_VERTEX, miles_jv_list, 0x3C4A610, 30);
 
+FunctionPointer(void, DrawEventAction, (taskwk* twp), 0x4187D0);
 FunctionPointer(void, DrawCharacterShadow, (taskwk* twp, shadowwk* swp), 0x49F0B0);
 static void(__cdecl** NodeCallbackFuncPtr)(NJS_OBJECT* obj) = (decltype(NodeCallbackFuncPtr))0x3AB9908;
 

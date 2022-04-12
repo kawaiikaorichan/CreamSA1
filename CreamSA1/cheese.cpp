@@ -150,7 +150,7 @@ static void CheeseNormal(taskwk* twp, taskwk* ptwp, playerwk* ppwp)
 	// If close then idle submode, if away then fly submode
 	if (dist < 1.0f)
 	{
-		twp->smode = ANIM_IDLE;
+		twp->smode = IsTailsFlying(ptwp, ppwp) ? ANIM_FLY : ANIM_IDLE;
 		twp->ang.y = AdjustAngle(twp->ang.y, ptwp->ang.y, 0x300); // Rotate to player angle
 	}
 	else

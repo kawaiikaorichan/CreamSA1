@@ -3,6 +3,13 @@
 #include "mod.h"
 #include "utils.h"
 
+#define MILES_FLY_ 15i8
+
+bool IsTailsFlying(taskwk* twp, playerwk* pwp)
+{
+	return twp->mode == MILES_FLY_ || (twp->ewp->action.list && twp->ewp->action.list->action.motion == MILES_ACTIONS[17]->motion);
+}
+
 void njRotateX_(Angle ang)
 {
 	if (ang)

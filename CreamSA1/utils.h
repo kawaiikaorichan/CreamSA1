@@ -3,6 +3,8 @@
 #include "ModelInfo.h"
 #include "AnimationFile.h"
 
+bool IsTailsFlying(taskwk* twp, playerwk* pwp);
+
 void njRotateX_(Angle ang);
 void njRotateY_(Angle ang);
 void njRotateZ_(Angle ang);

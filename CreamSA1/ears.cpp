@@ -7,7 +7,6 @@
 
 #define TWP_PNUM(twp) twp->counter.b[0]
 #define MILES_WALK 2i8
-#define MILES_FLY_ 15i8
 
 enum
 {
@@ -40,7 +39,7 @@ static void __cdecl CreamCallback(NJS_OBJECT* obj)
 
 static int GetEarAnimation(taskwk* twp, playerwk* pwp)
 {
-	if (twp->mode == MILES_FLY_)
+	if (IsTailsFlying(twp, pwp))
 	{
 		return ANIM_FLY;
 	}
@@ -145,7 +144,9 @@ static void __cdecl MilesDisplay_r(task* tp)
 
 			if (twp->ewp->action.list)
 			{
-
+				njSetZCompare(3);
+				DrawEventAction(twp);
+				npSetZCompare();
 			}
 			else if (pwp->mj.mtnmode == 2)
 			{
