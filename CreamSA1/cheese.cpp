@@ -117,6 +117,8 @@ static void __cdecl CheeseDisplay(task* tp)
 		njAction(&CHEESE_ACTIONS[twp->smode], twp->value.f);
 		njPopMatrixEx();
 		___dsSetPalette(0);
+
+		Shadow(twp, 0.33f);
 	}
 }
 

@@ -8,6 +8,8 @@ FunctionPointer(void, DrawEventAction, (taskwk* twp), 0x4187D0);
 FunctionPointer(void, DrawCharacterShadow, (taskwk* twp, shadowwk* swp), 0x49F0B0);
 static void(__cdecl** NodeCallbackFuncPtr)(NJS_OBJECT* obj) = (decltype(NodeCallbackFuncPtr))0x3AB9908;
 
+FunctionPointer(float, Shadow, (taskwk* twp, float scl), 0x49EE30);
+
 static const void* const MilesChangeRunningMotionPtr = (void*)0x459DA0;
 static inline void MilesChangeRunningMotion(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
