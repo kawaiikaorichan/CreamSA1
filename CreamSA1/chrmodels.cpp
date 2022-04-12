@@ -13,6 +13,8 @@ static ModelInfo* ANKLET_R_MDL = nullptr;
 static ModelInfo* HEAD_MDL     = nullptr;
 static ModelInfo* BADGE_MDL    = nullptr;
 static ModelInfo* EVENT_MDL    = nullptr;
+static ModelInfo* UP_ANKLT_MDL = nullptr;
+static ModelInfo* UP_BADGE_MDL = nullptr;
 
 static AnimationFile* EVENT_ANM = nullptr;
 
@@ -187,8 +189,18 @@ static void ReplaceTailsModels()
 	MILES_MOTIONS[0] = EVENT_ANM->getmotion();
 }
 
+void ReplaceItemUpgrades()
+{
+	OpenModel(&UP_ANKLT_MDL, "UpgradeJetAnklet.sa1mdl");
+	OpenModel(&UP_BADGE_MDL, "UpgradeRhythmBadge.sa1mdl");
+
+	*(NJS_OBJECT*)0x2B07A74 = *UP_ANKLT_MDL->getmodel();
+	ADV03_OBJECTS[31] = UP_BADGE_MDL->getmodel();
+}
+
 void HookCHRMODELS()
 {
 	ReplaceTailsModels();
+	ReplaceItemUpgrades();
 	WriteJump(InitTailsWeldInfo, InitTailsWeldInfo_r);
 }
