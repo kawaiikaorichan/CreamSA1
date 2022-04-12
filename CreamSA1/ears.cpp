@@ -6,7 +6,8 @@
 #include "pointers.h"
 
 #define TWP_PNUM(twp) twp->counter.b[0]
-#define MILES_FLY 15i8
+#define MILES_WALK 2i8
+#define MILES_FLY_ 15i8
 
 enum
 {
@@ -25,7 +26,7 @@ static AnimationFile* FLY_ANM  = nullptr;
 static AnimationFile* RUN_ANM  = nullptr;
 
 static NJS_MOTION* EarsMotions[ANIM_COUNT]{};
-static constexpr float MotionSpeeds[ANIM_COUNT] = { 0.05f, 0.1f, 0.05f };
+static constexpr float MotionSpeeds[ANIM_COUNT] = { 0.05f, 0.1f, 0.25f };
 
 static float MotionFrames[8]{};
 
@@ -39,11 +40,11 @@ static void __cdecl CreamCallback(NJS_OBJECT* obj)
 
 static int GetEarAnimation(taskwk* twp, playerwk* pwp)
 {
-	if (twp->mode == MILES_FLY)
+	if (twp->mode == MILES_FLY_)
 	{
 		return ANIM_FLY;
 	}
-	else if (pwp->spd.x > 2.0f)
+	else if (twp->mode == MILES_WALK && (pwp->mj.reqaction == 12 || pwp->mj.reqaction == 13 || pwp->mj.action == 12 ||pwp->mj.action == 13))
 	{
 		return ANIM_RUN;
 	}
