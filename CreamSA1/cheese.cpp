@@ -237,7 +237,8 @@ static void __cdecl CheeseExec(task* tp)
 	// Run animation
 	twp->value.f = fmod(twp->value.f + 1.0f, (float)(CHEESE_ACTIONS[twp->smode].motion->nbFrame - 1));
 	
-	EntryColliList(twp); // Add collision
+	if (GameState == 15)
+		EntryColliList(twp); // Add collision
 	LoopTaskC(tp); // Call the ball child task
 	tp->disp(tp); // Draw
 }
