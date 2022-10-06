@@ -10,6 +10,8 @@ static void(__cdecl** NodeCallbackFuncPtr)(NJS_OBJECT* obj) = (decltype(NodeCall
 
 FunctionPointer(float, Shadow, (taskwk* twp, float scl), 0x49EE30);
 
+TaskFunc(EV_ClrFace, 0x4310F0);
+
 static const void* const MilesChangeRunningMotionPtr = (void*)0x459DA0;
 static inline void MilesChangeRunningMotion(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {

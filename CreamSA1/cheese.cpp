@@ -5,6 +5,7 @@
 #include "AnimationFile.h"
 #include "utils.h"
 #include "pointers.h"
+#include "evhead.h"
 
 #define TWP_PNUM(twp) twp->counter.b[0]
 #define TWP_CHARA(twp) twp->counter.b[1]
@@ -255,11 +256,14 @@ static void CreateCheese(int pnum)
 static void __cdecl MilesTalesPrower_r(task* tp)
 {
 	auto twp = tp->twp;
+	auto co2 = (playerwk*)tp->mwp->work.l;
 
 	if (twp->mode == MILES_INIT)
 	{
 		CreateCheese(TWP_PNUM(twp));
 	}
+
+	DisableEV_HeadOnFrames(tp, twp, co2);
 
 	((decltype(MilesTalesPrower_r)*)MilesTalesPrower_t->Target())(tp);
 }

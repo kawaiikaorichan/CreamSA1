@@ -99,6 +99,7 @@
     <ClInclude Include="cheese.h" />
     <ClInclude Include="chrmodels.h" />
     <ClInclude Include="ears.h" />
+    <ClInclude Include="evhead.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="mod.h" />
@@ -111,6 +112,7 @@
     <ClCompile Include="chrmodels.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ears.cpp" />
+    <ClCompile Include="ev-head.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="mod.cpp" />
     <ClCompile Include="pch.cpp">
