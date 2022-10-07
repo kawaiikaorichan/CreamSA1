@@ -54,3 +54,17 @@ static inline BOOL MilesCheckInput(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	}
 	return result;
 }
+
+static const void* const MilesCheckHoldObjectPtr = (void*)0x45A9C0;
+static inline signed int MilesCheckHoldObj(playerwk* a1, taskwk* a2)
+{
+	int result;
+	__asm
+	{
+		mov esi, [a2]
+		mov edi, [a1]
+		call MilesCheckHoldObjectPtr
+		mov result, eax
+	}
+	return result;
+}
