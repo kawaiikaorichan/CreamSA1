@@ -10,6 +10,8 @@ static void(__cdecl** NodeCallbackFuncPtr)(NJS_OBJECT* obj) = (decltype(NodeCall
 
 FunctionPointer(float, Shadow, (taskwk* twp, float scl), 0x49EE30);
 
+TaskFunc(EV_ClrFace, 0x4310F0);
+
 static const void* const MilesChangeRunningMotionPtr = (void*)0x459DA0;
 static inline void MilesChangeRunningMotion(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
@@ -49,6 +51,20 @@ static inline BOOL MilesCheckInput(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 		call MilesCheckInputPtr
 		mov result, eax
 		add esp, 4
+	}
+	return result;
+}
+
+static const void* const MilesCheckHoldObjectPtr = (void*)0x45A9C0;
+static inline signed int MilesCheckHoldObj(playerwk* a1, taskwk* a2)
+{
+	int result;
+	__asm
+	{
+		mov esi, [a2]
+		mov edi, [a1]
+		call MilesCheckHoldObjectPtr
+		mov result, eax
 	}
 	return result;
 }

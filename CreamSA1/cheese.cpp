@@ -5,6 +5,7 @@
 #include "AnimationFile.h"
 #include "utils.h"
 #include "pointers.h"
+#include "evhead.h"
 
 #define TWP_PNUM(twp) twp->counter.b[0]
 #define TWP_CHARA(twp) twp->counter.b[1]
@@ -38,7 +39,7 @@ static AnimationFile* CHEESE_FLY_ANM    = nullptr;
 static AnimationFile* CHEESE_ATTACK_ANM = nullptr;
 
 static NJS_ACTION CHEESE_ACTIONS[3] = {};
-static CCL_INFO CHEESE_CCL = { 0, CI_FORM_SPHERE, 0x40, 0x41, 0x400, { 0.0f, 1.5f, 0.0f }, 2.0f, 0.0f, 0.0f, 0.0f, 0, 0, 0 };
+static CCL_INFO CHEESE_CCL = { 0, CI_FORM_SPHERE, 0x40, 0x41, 0x400, { 0.0f, 1.5f, 0.0f }, 1.3f, 0.0f, 0.0f, 0.0f, 0, 0, 0 };
 static task* cheese_tp[8] = {};
 static int ComboTimers[8]{};
 
@@ -132,7 +133,7 @@ static void CheeseNormal(taskwk* twp, taskwk* ptwp, playerwk* ppwp)
 	}
 
 	// Offset from player
-	NJS_POINT3 v = { -1.5f + (0.25f * njCos(FrameCounterUnpaused * 80)), ppwp->p.height - 1.0f + (0.8f * njSin(FrameCounterUnpaused * 80)), 2.3f + (1.0f * njCos(FrameCounterUnpaused * 180)) };
+	NJS_POINT3 v = { -5.5f + (0.25f * njCos(FrameCounterUnpaused * 80)), ppwp->p.height - 1.0f + (0.8f * njSin(FrameCounterUnpaused * 80)), 2.3f + (1.0f * njCos(FrameCounterUnpaused * 180)) };
 
 	// Calc world position
 	njPushMatrix(_nj_unit_matrix_);
@@ -255,11 +256,14 @@ static void CreateCheese(int pnum)
 static void __cdecl MilesTalesPrower_r(task* tp)
 {
 	auto twp = tp->twp;
+	auto co2 = (playerwk*)tp->mwp->work.l;
 
 	if (twp->mode == MILES_INIT)
 	{
 		CreateCheese(TWP_PNUM(twp));
 	}
+
+	DisableEV_HeadOnFrames(tp, twp, co2);
 
 	((decltype(MilesTalesPrower_r)*)MilesTalesPrower_t->Target())(tp);
 }
@@ -335,7 +339,7 @@ static void __declspec(naked) MilesChkMode_w()
 void InitCheese()
 {
 	MilesTalesPrower_t = new Trampoline(0x461700, 0x461707, MilesTalesPrower_r); // Hook Tails exec to add Cheese
-	MilesChkMode_t     = new Trampoline(0x45E5D0, 0x45E5D5, MilesChkMode_w); // Hook Tails modes to add custom attack
+	MilesChkMode_t = new Trampoline(0x45E5D0, 0x45E5D5, MilesChkMode_w); // Hook Tails modes to add custom attack
 
 	OpenModel(&CHEESE_MDL, "Cheese.sa1mdl");
 	OpenModel(&CHEESEBALL_MDL, "CheeseBall.sa1mdl");
